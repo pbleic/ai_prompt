@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .output-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .output-box {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .output-box h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        #generatedPrompt {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            background: #667eea;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .helper-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Prompt Generator</h1>
+        <p class="subtitle">Create structured, effective prompts for AI assistants</p>
+
+        <form id="promptForm">
+            <!-- YOU ARE Section -->
+            <div class="form-section">
+                <h2>Role Definition</h2>
+                <div class="form-group">
+                    <label for="role">YOU ARE:</label>
+                    <input type="text" id="role" placeholder="An expert assistant" value="An expert assistant">
+                </div>
+            </div>
+
+            <!-- OBJECTIVE Section -->
+            <div class="form-section">
+                <h2>Objective</h2>
+                <div class="form-group">
+                    <label for="goal">Goal (what you want):</label>
+                    <textarea id="goal" placeholder="Describe the main goal or outcome you're seeking..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="success">Success Criteria (how you'll judge it):</label>
+                    <textarea id="success" placeholder="How will you measure success or know the task is complete?"></textarea>
+                </div>
+            </div>
+
+            <!-- CONTEXT Section -->
+            <div class="form-section">
+                <h2>Context</h2>
+                <div class="form-group">
+                    <label for="audience">Audience (who):</label>
+                    <input type="text" id="audience" placeholder="Who is this for? (e.g., developers, students, executives)">
+                </div>
+                <div class="form-group">
+                    <label for="topic">Topic (what):</label>
+                    <input type="text" id="topic" placeholder="What is the subject matter?">
+                </div>
+                <div class="form-group">
+                    <label for="constraints">Constraints:</label>
+                    <textarea id="constraints" placeholder="Word count, tone, style (e.g., AP), must include/avoid..."></textarea>
+                    <div class="helper-text">Example: 500 words max, professional tone, AP style, avoid jargon</div>
+                </div>
+            </div>
+
+            <!-- MODE Section -->
+            <div class="form-section">
+                <h2>Mode</h2>
+                <label>Select applicable modes:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode1" value="Edit writing">
+                        <label for="mode1">Edit writing</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode2" value="Generate ideas">
+                        <label for="mode2">Generate ideas</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode3" value="Teach">
+                        <label for="mode3">Teach</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode4" value="Plan">
+                        <label for="mode4">Plan</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode5" value="Research">
+                        <label for="mode5">Research</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode6" value="Analyze/compare">
+                        <label for="mode6">Analyze/compare</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode7" value="Code">
+                        <label for="mode7">Code</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode8" value="Summarize">
+                        <label for="mode8">Summarize</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode9" value="Create content">
+                        <label for="mode9">Create content</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mode10" value="Coach">
+                        <label for="mode10">Coach</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OUTPUT CONTROLS Section -->
+            <div class="form-section">
+                <h2>Output Controls</h2>
+                <div class="form-group">
+                    <label for="format">Format:</label>
+                    <select id="format">
+                        <option value="">Select format...</option>
+                        <option value="bullets">Bullets</option>
+                        <option value="steps">Steps</option>
+                        <option value="table">Table</option>
+                        <option value="outline">Outline</option>
+                        <option value="code">Code</option>
+                        <option value="essay">Essay</option>
+                        <option value="report">Report</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="length">Length:</label>
+                    <select id="length">
+                        <option value="">Select length...</option>
+                        <option value="brief">Brief</option>
+                        <option value="~500 words">~500 words</option>
+                        <option value="detailed">Detailed</option>
+                        <option value="comprehensive">Comprehensive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="include">Include:</label>
+                    <input type="text" id="include" placeholder="examples, citations, templates, diagrams, etc.">
+                </div>
+            </div>
+
+            <!-- TOOLS Section -->
+            <div class="form-section">
+                <h2>Tools</h2>
+                <div class="form-group">
+                    <label for="tools">Tool Instructions:</label>
+                    <textarea id="tools" placeholder="If browsing/tools allowed, use them and cite. If not, note limits and assumptions.">If browsing/tools allowed, use them and cite. If not, note limits and assumptions.</textarea>
+                </div>
+            </div>
+
+            <!-- WORKFLOW Section -->
+            <div class="form-section">
+                <h2>Workflow</h2>
+                <div class="form-group">
+                    <label for="workflow">Workflow Steps:</label>
+                    <textarea id="workflow" rows="6">1) If unclear, ask up to 3 precise questions. If clear, proceed and state assumptions.
+2) Draft the answer.
+3) QA for accuracy, logic, and style. Remove fluff.
+4) Offer 3 improvement options.</textarea>
+                    <div class="helper-text">Customize the workflow steps as needed</div>
+                </div>
+            </div>
+
+            <!-- INPUTS Section -->
+            <div class="form-section">
+                <h2>Inputs</h2>
+                <div class="form-group">
+                    <label for="inputs">Additional Inputs:</label>
+                    <textarea id="inputs" placeholder="Paste text, data, links, or type 'none'">none</textarea>
+                    <div class="helper-text">Paste any relevant text, data, or links here</div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn-primary">Generate Prompt</button>
+                <button type="button" class="btn-secondary" onclick="resetForm()">Clear Form</button>
+            </div>
+        </form>
+
+        <!-- Output Section -->
+        <div class="output-section" id="outputSection">
+            <div class="output-box">
+                <h2>Generated Prompt</h2>
+                <button type="button" class="copy-btn" onclick="copyPrompt()">Copy</button>
+                <div id="generatedPrompt"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('promptForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            generatePrompt();
+        });
+
+        function generatePrompt() {
+            // Collect form values
+            const role = document.getElementById('role').value.trim();
+            const goal = document.getElementById('goal').value.trim();
+            const success = document.getElementById('success').value.trim();
+            const audience = document.getElementById('audience').value.trim();
+            const topic = document.getElementById('topic').value.trim();
+            const constraints = document.getElementById('constraints').value.trim();
+            
+            // Collect selected modes
+            const modes = [];
+            for (let i = 1; i <= 10; i++) {
+                const checkbox = document.getElementById('mode' + i);
+                if (checkbox.checked) {
+                    modes.push(checkbox.value);
+                }
+            }
+            
+            const format = document.getElementById('format').value;
+            const length = document.getElementById('length').value;
+            const include = document.getElementById('include').value.trim();
+            const tools = document.getElementById('tools').value.trim();
+            const workflow = document.getElementById('workflow').value.trim();
+            const inputs = document.getElementById('inputs').value.trim();
+
+            // Build the prompt
+            let prompt = '';
+            
+            // YOU ARE
+            if (role) {
+                prompt += `YOU ARE: ${role}\n\n`;
+            }
+            
+            // OBJECTIVE
+            prompt += 'OBJECTIVE\n';
+            if (goal) {
+                prompt += `- Goal: ${goal}\n`;
+            }
+            if (success) {
+                prompt += `- Success: ${success}\n`;
+            }
+            prompt += '\n';
+            
+            // CONTEXT
+            prompt += 'CONTEXT\n';
+            if (audience) {
+                prompt += `- Audience: ${audience}\n`;
+            }
+            if (topic) {
+                prompt += `- Topic: ${topic}\n`;
+            }
+            if (constraints) {
+                prompt += `- Constraints: ${constraints}\n`;
+            }
+            prompt += '\n';
+            
+            // MODE
+            if (modes.length > 0) {
+                prompt += 'MODE (pick as needed)\n';
+                prompt += '- ' + modes.join(' • ') + '\n\n';
+            } else {
+                prompt += 'MODE (pick as needed)\n';
+                prompt += '- Edit writing • Generate ideas • Teach • Plan • Research • Analyze/compare • Code • Summarize • Create content • Coach\n\n';
+            }
+            
+            // OUTPUT CONTROLS
+            prompt += 'OUTPUT CONTROLS\n';
+            if (format) {
+                prompt += `- Format: ${format}\n`;
+            }
+            if (length) {
+                prompt += `- Length: ${length}\n`;
+            }
+            if (include) {
+                prompt += `- Include: ${include}\n`;
+            }
+            prompt += '\n';
+            
+            // TOOLS
+            if (tools) {
+                prompt += 'TOOLS\n';
+                prompt += `- ${tools}\n\n`;
+            }
+            
+            // WORKFLOW
+            if (workflow) {
+                prompt += 'WORKFLOW\n';
+                const workflowLines = workflow.split('\n');
+                workflowLines.forEach(line => {
+                    if (line.trim()) {
+                        prompt += `${line}\n`;
+                    }
+                });
+                prompt += '\n';
+            }
+            
+            // INPUTS
+            if (inputs) {
+                prompt += 'INPUTS\n';
+                prompt += `${inputs}\n`;
+            }
+
+            // Display the prompt
+            document.getElementById('generatedPrompt').textContent = prompt;
+            document.getElementById('outputSection').style.display = 'block';
+            
+            // Smooth scroll to output
+            document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function copyPrompt() {
+            const promptText = document.getElementById('generatedPrompt').textContent;
+            navigator.clipboard.writeText(promptText).then(function() {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#4CAF50';
+                setTimeout(function() {
+                    btn.textContent = originalText;
+                    btn.style.background = '#667eea';
+                }, 2000);
+            }, function(err) {
+                alert('Failed to copy text: ' + err);
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('promptForm').reset();
+            document.getElementById('outputSection').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
+
