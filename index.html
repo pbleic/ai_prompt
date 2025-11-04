@@ -254,7 +254,7 @@ footer a:hover {
             <div class="form-section">
                 <h2>Role Definition</h2>
                 <div class="form-group">
-                    <label for="role">YOU ARE:</label>
+                    <label for="role">YOU ARE (optional: add specifics of expertise):</label>
                     <input type="text" id="role" placeholder="An expert assistant" value="An expert assistant">
                 </div>
             </div>
@@ -339,21 +339,42 @@ footer a:hover {
             </div>
 
             <!-- OUTPUT CONTROLS Section -->
-            <div class="form-section">
-                <h2>Output Controls</h2>
-                <div class="form-group">
-                    <label for="format">Format:</label>
-                    <select id="format">
-                        <option value="">Select format...</option>
-                        <option value="bullets">Bullets</option>
-                        <option value="steps">Steps</option>
-                        <option value="table">Table</option>
-                        <option value="outline">Outline</option>
-                        <option value="code">Code</option>
-                        <option value="essay">Essay</option>
-                        <option value="report">Report</option>
-                    </select>
-                </div>
+<div class="form-section">
+    <h2>Output Controls</h2>
+    <div class="form-group">
+        <label for="format">Format:</label>
+        <select id="format">
+            <option value="">Select format...</option>
+            <option value="bullets">Bullets</option>
+            <option value="steps">Steps</option>
+            <option value="table">Table</option>
+            <option value="outline">Outline</option>
+            <option value="code">Code</option>
+            <option value="essay">Essay</option>
+            <option value="report">Report</option>
+            <option value="presentation">Presentation</option>
+            <option value="teaching-outline">Teaching Outline</option>
+            <option value="quiz">Quiz</option>
+            <option value="Creative List of 5">List of 5 (sampled from full probability distribution)</option>
+            <option value="Creative List of 5 from the tails">List of 5 (sampled from both tails, no probability > 0.1)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="length">Length:</label>
+        <select id="length">
+            <option value="">Select length...</option>
+            <option value="brief">Brief</option>
+            <option value="~500 words">~500 words</option>
+            <option value="detailed">Detailed</option>
+            <option value="comprehensive">Comprehensive</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="include">Include:</label>
+        <input type="text" id="include" placeholder="examples, citations, templates, diagrams, etc.">
+    </div>
+</div>
+
                 <div class="form-group">
                     <label for="length">Length:</label>
                     <select id="length">
