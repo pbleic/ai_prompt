@@ -222,6 +222,26 @@
                 flex-direction: column;
             }
         }
+    footer {
+    margin-top: 40px;
+    padding: 20px;
+    text-align: center;
+    background: #f8f9fa;
+    border-top: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
     </style>
 </head>
 <body>
@@ -397,6 +417,18 @@
                 <div id="generatedPrompt"></div>
             </div>
         </div>
+        <!-- Output Section -->
+        <div class="output-section" id="outputSection">
+            <div class="output-box">
+                <h2>Generated Prompt</h2>
+                <button type="button" class="copy-btn" onclick="copyPrompt()">Copy</button>
+                <div id="generatedPrompt"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Prompt template adapted from <a href="https://www.tomsguide.com/ai/i-created-one-chatgpt-prompt-that-works-in-absolutely-any-situation-heres-how-to-use-it" target="_blank" rel="noopener">Tom's Guide</a></p>
+        </footer>
     </div>
 
     <script>
